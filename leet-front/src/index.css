@@ -1,0 +1,31 @@
+.container {
+	position: relative;
+	width: 100%;
+	height:100%;
+	margin-left: 5px;
+}
+.collabta {
+	float: left;
+	width: 50%;
+	height: 700px;
+}
+.results {
+	float: left;
+	margin-left: 1%;
+	width: 49%;
+	height: 700px;
+}
+.upper {
+	float: left;
+	width: 500px;
+	height: 350px;
+	overflow-x: scroll;
+	border: 1px solid black;
+}
+.down {
+	float: left;
+	width: 500px;
+	height: 350px;
+	overflow-x: scroll;
+	border: 1px solid black;
+}

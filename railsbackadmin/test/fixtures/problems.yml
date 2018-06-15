@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  problem_no: 1
+  title: MyString
+  frequency: MyString
+  reference: MyString
+  appendix: MyString
+  url: MyString
+  difficulty: one
+
+two:
+  problem_no: 1
+  title: MyString
+  frequency: MyString
+  reference: MyString
+  appendix: MyString
+  url: MyString
+  difficulty: two

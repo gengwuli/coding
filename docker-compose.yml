@@ -1,0 +1,47 @@
+version: '3'
+services:
+  coderunner:
+    build: coderunner
+    ports:
+      - "8085:3000"
+  db:
+    image: mysql
+    expose:
+     - 3306
+    environment:
+       - MYSQL_ROOT_PASSWORD=my_password
+       - MYSQL_DATABASE=leet
+    volumes:
+       - ./railsbackadmin/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+  cache:
+    image: redis:alpine
+  railsbackadmin:
+    build: railsbackadmin
+    ports:
+      - "8082:3000"
+    command: rails db:migrate
+    command: rails server -b 0.0.0.0
+    depends_on:
+      - db
+  sharedb:
+    build: sharedb-ta
+    ports:
+      - "8083:8080"
+  socket_backend:
+    build: socket_backend
+    ports:
+      - "8081:8080"
+  template_engine:
+    build: template_engine
+    ports:
+      - "8084:8080"
+  leet-front:
+    build: leet-front
+    ports:
+      - "8080:3000"
+    depends_on:
+      - coderunner
+      - railsbackadmin
+      - sharedb
+      - socket_backend
+      - template_engine
