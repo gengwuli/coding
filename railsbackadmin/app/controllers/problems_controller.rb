@@ -1,9 +1,9 @@
 class ProblemsController < ApplicationController
 	# problems GET        /problems(.:format)                        problems#index
     def index
-    	# problems = Problem.includes(:solutions, :categories, :companies, :difficulty).all
+    	problems = Problem.includes(:solutions, :categories, :companies, :difficulty).all
 
-    	@content ||= Problem.all.map do |problem|
+    	res = problems.map do |problem|
     		categories = problem.categories.map(&:name).join(",")
     		companies = problem.companies.map(&:name).join(",")
     		difficulty = problem.difficulty.level
@@ -32,6 +32,6 @@ class ProblemsController < ApplicationController
     			"difficulty" => difficulty
     		}
     	end
-    	render json: @content
+    	render json: res
     end
 end

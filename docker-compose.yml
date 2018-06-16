@@ -5,16 +5,11 @@ services:
     ports:
       - "8085:3000"
   db:
-    image: mysql
-    command: mysqld --default-authentication-plugin=mysql_native_password
+    image: postgres:alpine
     expose:
-     - 3306
+     - 5432
     environment:
-       - MYSQL_ROOT_PASSWORD=my_password
-       - MYSQL_DATABASE=leet
-       - MYSQL_ROOT_HOST=%
-    volumes:
-       - ./railsbackadmin/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+     - POSTGRES_PASSWORD=my_password
   cache:
     image: redis:alpine
   railsbackadmin:

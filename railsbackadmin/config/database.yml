@@ -1,11 +1,10 @@
 default: &default
-  adapter: mysql2
+  adapter: postgresql
   encoding: utf8
-  database: leet
   host: db
-  port: 3306
+  port: 5432
   pool: 5
-  username: root
+  username: postgres
   password: my_password
 
 development:

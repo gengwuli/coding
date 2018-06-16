@@ -12,7 +12,10 @@
 
 ActiveRecord::Schema.define(version: 20180613005004) do
 
-  create_table "active_admin_comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
     t.string "resource_type"
@@ -26,7 +29,7 @@ ActiveRecord::Schema.define(version: 20180613005004) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
-  create_table "admin_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "admin_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -43,44 +46,44 @@ ActiveRecord::Schema.define(version: 20180613005004) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "categories", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
-  create_table "categories_problems", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "categories_problems", id: false, force: :cascade do |t|
     t.bigint "category_id", null: false
     t.bigint "problem_id", null: false
   end
 
-  create_table "companies", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "companies", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_companies_on_name", unique: true
   end
 
-  create_table "companies_problems", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "companies_problems", id: false, force: :cascade do |t|
     t.bigint "company_id", null: false
     t.bigint "problem_id", null: false
   end
 
-  create_table "difficulties", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "difficulties", force: :cascade do |t|
     t.string "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["level"], name: "index_difficulties_on_level", unique: true
   end
 
-  create_table "languages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "languages", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "problems", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "problems", force: :cascade do |t|
     t.integer "problem_no"
     t.string "title"
     t.string "frequency"
@@ -93,7 +96,7 @@ ActiveRecord::Schema.define(version: 20180613005004) do
     t.index ["difficulty_id"], name: "index_problems_on_difficulty_id"
   end
 
-  create_table "solutions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+  create_table "solutions", force: :cascade do |t|
     t.text "solution"
     t.bigint "problem_id"
     t.bigint "language_id"
