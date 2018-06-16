@@ -1,5 +1,3 @@
 node_modules/
-build/
-dist/
 railsbackadmin/db.txt
 railsbackadmin/test.rb
