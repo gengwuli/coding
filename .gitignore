@@ -1,3 +1,4 @@
 node_modules/
 railsbackadmin/db.txt
 railsbackadmin/test.rb
+tmp/
