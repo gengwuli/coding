@@ -11,3 +11,7 @@ docker cp ~/db.txt $backadmin:/usr/src/app
 docker cp ~/test.rb $backadmin:/usr/src/app
 docker exec $backadmin rails runner test.rb
 
+# Add admin user
+docker cp ~/seeds.rb $backadmin:/usr/src/app/db
+docker exec $backadmin rails db:seed
+# AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
