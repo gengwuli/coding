@@ -1,4 +1,4 @@
-FROM ruby:2.3
+FROM ruby
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
@@ -14,7 +14,7 @@ RUN bundle install
 
 COPY . /usr/src/app
 
-RUN apt-get update && apt-get install -y elixir/stable nodejs-legacy openjdk-8-jdk/stable scala/stable
+RUN apt-get update && apt-get install -y elixir nodejs-legacy openjdk-8-jdk scala
 
 RUN gem install rails && rm -rf /var/lib/apt/lists/* && rm -rf /usr/src/app/tmp/*
 

@@ -31,7 +31,15 @@ export default class CodeRun extends React.Component {
     render() {
     	return (<div className={'container'}>
                       <div>
-                        <select id="language"><option>javascript</option><option>python</option><option>ruby</option><option>java</option></select>
+                        <select id="language">
+                          <option>javascript</option>
+                          <option>python</option>
+                          <option>ruby</option>
+                          <option>java</option>
+                          <option>scala</option>
+                          <option>cpp</option>
+                          <option>elixir</option>
+                        </select>
                         <select id="dataStructure"><option>array</option><option>tree</option><option>linked_list</option><option>raw</option></select>
                         <button onClick={this.runCode}>Run</button>
                       </div>

@@ -10,7 +10,7 @@ class CodeController < ApplicationController
     render :json => res
   end
 
-  %w(java cpp ruby javascript python elixir).each do |method|
+  %w(java cpp ruby javascript python elixir scala).each do |method|
     module_eval <<-DELEGATORS, __FILE__, __LINE__ + 1
         def #{method}(code)
           #{method.capitalize}Executor.run code
