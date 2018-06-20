@@ -1,3 +1,3 @@
 ActiveAdmin.register Solution do
-  permit_params :language, :solution, :problem_id
+  permit_params :solution, :problem_id, :language_id
 end

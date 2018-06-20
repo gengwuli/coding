@@ -18,5 +18,5 @@ docker exec $backadmin rails db:seed
 
 postgres=$(docker ps -aqf "name=coding_db_1")
 
-docker cp ~/leet.dump $postgres:/
-docker exec $postgres pg_restore -d postgres -U postgres /leet.dump
+docker exec $postgres pg_restore -d postgres -U postgres /backup/leet.dump
+
