@@ -82,10 +82,10 @@ export default class Problem extends React.Component {
 
         return (
                 <div>
-                      <div id="id01" className="w3-modal">
+                      <div id="id01" className="w3-modal" tabIndex="0" onKeyUp={this.onModalClick}>
                         <div className="w3-modal-content">
                           <div className="w3-container">
-                            <span className="w3-button w3-display-topright" onClick={this.onModalClick} onKeyUp={this.onModalClick}>&times;</span>
+                            <span className="w3-button w3-display-topright" onClick={this.onModalClick}>&times;</span>
                             <pre>{this.state.currentSolution}</pre>
                           </div>
                         </div>
