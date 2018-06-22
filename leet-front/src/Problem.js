@@ -47,6 +47,9 @@ export default class Problem extends React.Component {
         this.onDiffClick = this.onDiffClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.reset = this.reset.bind(this);
+        this.onSelectOptionChange = this.onSelectOptionChange.bind(this);
+        this.onSelectFocus = this.onSelectFocus.bind(this);
+
     }
 
     componentDidMount() {
@@ -82,7 +85,7 @@ export default class Problem extends React.Component {
                       <div id="id01" className="w3-modal">
                         <div className="w3-modal-content">
                           <div className="w3-container">
-                            <span className="w3-button w3-display-topright" onClick={this.onModalClick}>&times;</span>
+                            <span className="w3-button w3-display-topright" onClick={this.onModalClick} onKeyUp={this.onModalClick}>&times;</span>
                             <pre>{this.state.currentSolution}</pre>
                           </div>
                         </div>
@@ -270,9 +273,17 @@ export default class Problem extends React.Component {
     _solutionRenderer({cellData, rowData}) {
       if (cellData.length === 0) { return (<div>no solution</div>)}
       const btns = cellData.map((d) => {
-        return <button key={Math.random()} onClick={(f) => this.onSolutionClick(f, d)}>{d.language.name}</button>
+        return <option key={Math.random()} onClick={(f) => this.onSolutionClick(f, d)}>{d.language.name}</option>
       })
-      return (<div>{btns}</div>)
+      return (<select onChange={this.onSelectOptionChange} onFocus={this.onSelectFocus}>{btns}</select>)
+    }
+
+    onSelectOptionChange(e) {
+        e.target.options[e.target.selectedIndex].click();
+    }
+
+    onSelectFocus(e) {
+        e.target.selectedIndex = -1;
     }
 
     onSolutionClick(e, d) {
