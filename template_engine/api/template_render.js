@@ -27,26 +27,29 @@ function renderTemplate(req, res) {
    let dotRes = '';
         switch(body.type) {
             case 'tree':
-                dotRes = renderTree(body['val']);
+                dotRes = body['val'].trim().split('\n').map(e => renderTree(e));
                 break;
             case 'array':
-                let arr = JSON.parse(body['val']);
-                if (Array.isArray(arr[0])) {
-                    dotRes = renderArray(arr);
-                } else {
-                    dotRes = renderArray([arr]);
-                }
+                dotRes = body['val'].trim().split('\n').map(e => {
+                    let arr = JSON.parse(e);
+                    if (Array.isArray(arr[0])) {
+                        return renderArray(arr);
+                    } else {
+                        return renderArray([arr]);
+                    }
+                })
                 break;
             case 'linked_list':
-                dotRes = renderList(JSON.parse(body['val']));
+                dotRes = body['val'].trim().split('\n').map(e => renderList(JSON.parse(e)));
+                console.log(dotRes)
                 break;
             default:
-                dotRes = body['val'];
+                dotRes = [body['val'].trim()];
                 break;
         }
 
-        viz.renderString(dotRes).then(result => {
-            res.json({"result": result});
+        Promise.all(dotRes.map(eachLine => viz.renderString(eachLine))).then(values => {
+            res.json({"result": values.map(e => `<div>${e}</div>`).join('\n')})
         }).catch(error => {
             res.json({"error": error});
         });

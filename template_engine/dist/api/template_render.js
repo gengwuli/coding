@@ -47,26 +47,37 @@ function renderTemplate(req, res) {
     var dotRes = '';
     switch (body.type) {
         case 'tree':
-            dotRes = (0, _TreeUtil2.default)(body['val']);
+            dotRes = body['val'].trim().split('\n').map(function (e) {
+                return (0, _TreeUtil2.default)(e);
+            });
             break;
         case 'array':
-            var arr = JSON.parse(body['val']);
-            if (Array.isArray(arr[0])) {
-                dotRes = (0, _ArrayUtil2.default)(arr);
-            } else {
-                dotRes = (0, _ArrayUtil2.default)([arr]);
-            }
+            dotRes = body['val'].trim().split('\n').map(function (e) {
+                var arr = JSON.parse(e);
+                if (Array.isArray(arr[0])) {
+                    return (0, _ArrayUtil2.default)(arr);
+                } else {
+                    return (0, _ArrayUtil2.default)([arr]);
+                }
+            });
             break;
         case 'linked_list':
-            dotRes = (0, _ListUtil2.default)(JSON.parse(body['val']));
+            dotRes = body['val'].trim().split('\n').map(function (e) {
+                return (0, _ListUtil2.default)(JSON.parse(e));
+            });
+            console.log(dotRes);
             break;
         default:
-            dotRes = body['val'];
+            dotRes = [body['val'].trim()];
             break;
     }
 
-    viz.renderString(dotRes).then(function (result) {
-        res.json({ "result": result });
+    Promise.all(dotRes.map(function (eachLine) {
+        return viz.renderString(eachLine);
+    })).then(function (values) {
+        res.json({ "result": values.map(function (e) {
+                return '<div>' + e + '</div>';
+            }).join('\n') });
     }).catch(function (error) {
         res.json({ "error": error });
     });

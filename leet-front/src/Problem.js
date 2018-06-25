@@ -18,6 +18,12 @@ export default class Problem extends React.Component {
         const sortedList = this._sortList({sortBy, sortDirection});
         superagentCache(request);
 
+        document.addEventListener('keyup', (e) => {
+            if ((e.keyCode || e.which) == 27) {
+                document.getElementById("id01").style.display = 'none';
+            }
+        })
+
         this.state = {
             disableHeader: false,
             headerHeight: 30,
@@ -269,7 +275,7 @@ export default class Problem extends React.Component {
       const opts = comps.map((c) => {
           return (<option value={c} key={Math.random()}>{c}</option>)
       })
-      return <select onChange={(f) => this.onClickSelect(f, dataKey)}>{opts}</select>
+      return <select onChange={(f) => this.onClickSelect(f, dataKey)} onFocus={this.onSelectFocus}>{opts}</select>
     }
 
     _solutionRenderer({cellData, rowData}) {
@@ -292,7 +298,6 @@ export default class Problem extends React.Component {
       this.setState({
         currentSolution: d.solution
       })
-      document.getElementById("id01").focus();
       document.getElementById("id01").style.display = 'block';
     }
 
@@ -331,7 +336,7 @@ export default class Problem extends React.Component {
         res = Immutable.List(this.state.problems).filter(x => x.title.toLowerCase().indexOf(e.target.value) !== -1);
         
       } else if (e.target.placeholder === 'search id') {
-        res = Immutable.List(this.state.problems).filter(x => x.problemId.toString().indexOf(e.target.value) !== -1)
+        res = Immutable.List(this.state.problems).filter(x => x.problem_id.toString().indexOf(e.target.value) !== -1)
       }
       this.setState({
         rowCount: res.size,
