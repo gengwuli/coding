@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 import * as React from 'react';
 
 import request from 'superagent'
+import  superagentCache  from  'superagent-cache';
 
 import { AutoSizer, Table, SortDirection, SortIndicator, Column } from 'react-virtualized'
 
@@ -15,6 +16,7 @@ export default class Problem extends React.Component {
         const sortBy = 'problemId';
         const sortDirection = SortDirection.ASC;
         const sortedList = this._sortList({sortBy, sortDirection});
+        superagentCache(request);
 
         this.state = {
             disableHeader: false,
@@ -290,6 +292,7 @@ export default class Problem extends React.Component {
       this.setState({
         currentSolution: d.solution
       })
+      document.getElementById("id01").focus();
       document.getElementById("id01").style.display = 'block';
     }
 
