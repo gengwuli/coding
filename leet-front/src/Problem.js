@@ -9,6 +9,20 @@ import { AutoSizer, Table, SortDirection, SortIndicator, Column } from 'react-vi
 
 import styles from 'react-virtualized/styles.css';
 
+import brace from 'brace';
+import AceEditor from 'react-ace';
+
+import 'brace/mode/java';
+import 'brace/theme/textmate';
+import 'brace/mode/c_cpp'
+import 'brace/mode/ruby'
+import 'brace/mode/scala'
+import 'brace/mode/javascript'
+import 'brace/mode/python'
+import 'brace/mode/mysql'
+
+import ReactModal from 'react-modal'
+
 export default class Problem extends React.Component {
 
     constructor(props) {
@@ -18,16 +32,12 @@ export default class Problem extends React.Component {
         const sortedList = this._sortList({sortBy, sortDirection});
         superagentCache(request);
 
-        document.addEventListener('keyup', (e) => {
-            if ((e.keyCode || e.which) == 27) {
-                document.getElementById("id01").style.display = 'none';
-            }
-        })
+        
 
         this.state = {
             disableHeader: false,
             headerHeight: 30,
-            height: 400,
+            height: 500,
             overscanRowCount: 10,
             rowHeight: 40,
             rowCount: 0,
@@ -38,8 +48,18 @@ export default class Problem extends React.Component {
             useDynamicRowHeight: false,
             problems: [],
             currentSolution: '',
-            problemUrl: process.env.REACT_APP_PROBLEM_BACKEND
+            problemUrl: process.env.REACT_APP_PROBLEM_BACKEND,
+            mode: 'javascript',
+            showModal: false
         };
+
+        document.addEventListener('keyup', (e) => {
+            if ((e.keyCode || e.which) == 27) {
+                this.setState({
+                    showModal: false
+                })
+            }
+        })
 
         this._getRowHeight = this._getRowHeight.bind(this);
         this._headerRenderer = this._headerRenderer.bind(this);
@@ -50,7 +70,6 @@ export default class Problem extends React.Component {
         this._renderSelect = this._renderSelect.bind(this);
         this._solutionRenderer = this._solutionRenderer.bind(this);
         this.onSolutionClick = this.onSolutionClick.bind(this);
-        this.onModalClick = this.onModalClick.bind(this);
         this.onClickSelect = this.onClickSelect.bind(this);
         this.onDiffClick = this.onDiffClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -63,13 +82,24 @@ export default class Problem extends React.Component {
     componentDidMount() {
         request.get(this.state.problemUrl)
             .then((res) => {
-              this.setState({
-                problems: res.body,
-                sortedList: Immutable.List(res.body),
-                rowCount: res.body.length
-              });
+                const problems = res.body
+                this.setState({
+                  problems: problems,
+                  sortedList: Immutable.List(problems),
+                  rowCount: problems.length
+                });
             })
     }
+
+    // for local testing
+    // componentDidMount() {
+    //     const problems = [{"problem_id":1,"title":"Two Sum","categories":"Array,Hash Table","companies":"LinkedIn,Uber,Airbnb,Facebook,Amazon,Microsoft,Apple,Yahoo,Dropbox,Bloomberg,Yelp,Adobe","frequency":"4774","solutions":[{"language":{"id":5,"name":"scala","created_at":"2018-06-25T04:50:33.797Z","updated_at":"2018-06-25T04:50:33.797Z"},"solution":"import scala.collection.mutable.HashMap\r\nobject Solution {\r\n    def twoSum(nums: Array[Int], target: Int): Array[Int] = {\r\n        val map = new HashMap[Int, Int]\r\n        for (i \u003c- 0 until nums.length) {\r\n            if (map.contains(nums(i))) { // 注意same element的定义, 是否是值相等还是同一个数\r\n                return Array(map(nums(i)), i)\r\n            }\r\n            map(target - nums(i)) = i\r\n        }\r\n        throw new IllegalArgumentException(\"No two sum solution\")\r\n    }\r\n}"},{"language":{"id":2,"name":"python","created_at":"2018-06-25T04:46:54.146Z","updated_at":"2018-06-25T04:46:54.146Z"},"solution":"class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        map = dict()\n        for i,num in enumerate(nums):\n            if target - num in map:\n                return [map[target-num], i]\n            map[num] = i"},{"language":{"id":1,"name":"java","created_at":"2018-06-25T04:46:54.143Z","updated_at":"2018-06-25T04:46:54.143Z"},"solution":"// 可以brute force可以二分法如果排序的话                                               \npublic class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        if (nums == null || nums.length == 0) {\n            return nums;\n        }\n        Map\u003cInteger, Integer\u003e map = new HashMap\u003c\u003e();\n        for (int i = 0; i \u003c nums.length; i++) {\n            if (map.containsKey(nums[i])) {\n                return new int[] {map.get(nums[i]), i};\n            }\n            map.put(target - nums[i], i);\n        }\n        return new int[0];\n    }\n}"}],"ref":"https://leetcode.com/articles/two-sum","append":"空","url":"https://leetcode.com/problems/two-sum","difficulty":"Easy"}]
+    //       this.setState({
+    //         problems: problems,
+    //         sortedList: Immutable.List(problems),
+    //         rowCount: problems.length
+    //       });
+    // }
 
     render() {
         const {
@@ -90,14 +120,22 @@ export default class Problem extends React.Component {
 
         return (
                 <div>
-                      <div id="id01" className="w3-modal" tabIndex="0" onKeyUp={this.onModalClick}>
-                        <div className="w3-modal-content">
-                          <div className="w3-container">
-                            <span className="w3-button w3-display-topright" onClick={this.onModalClick}>&times;</span>
-                            <pre>{this.state.currentSolution}</pre>
-                          </div>
-                        </div>
-                      </div>
+                      <ReactModal 
+                           isOpen={this.state.showModal}>
+                           <AceEditor
+                            mode={this.state.mode}
+                            theme="textmate"
+                            name="editor"
+                            setOptions={{ showLineNumbers: false }}
+                            value={this.state.currentSolution}
+                            fontSize={16}
+                            showGutter={false}
+                            highlightActiveLine={false}
+                            readOnly={true}
+                            width={"auto"}
+                          />
+                        </ReactModal>
+                        
                       <div>
                         <input type="text" placeholder="search id" onKeyUp={this.onSearch}/>
                         <input type="text" placeholder="search title"  onKeyUp={this.onSearch}/>
@@ -295,14 +333,12 @@ export default class Problem extends React.Component {
     }
 
     onSolutionClick(e, d) {
+        console.log(d.language.name)
       this.setState({
-        currentSolution: d.solution
+        currentSolution: d.solution,
+        mode: d.language.name,
+        showModal: true
       })
-      document.getElementById("id01").style.display = 'block';
-    }
-
-    onModalClick() {
-      document.getElementById('id01').style.display='none'
     }
 
     onClickSelect(e, dataKey) {
@@ -351,5 +387,4 @@ export default class Problem extends React.Component {
         rowCount: this.state.problems.length
       })
     }
-
 }

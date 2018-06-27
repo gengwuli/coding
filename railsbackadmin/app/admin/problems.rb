@@ -2,7 +2,7 @@ ActiveAdmin.register Problem do
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 #
-permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficulty_id, company_ids: [],
+permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficulty_id, :url, company_ids: [],
               category_ids: []
 #
 # or
@@ -23,6 +23,7 @@ permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficult
       row :frequency
       row :reference
       row :appendix
+      row :url
       table_for problem.categories.order('name ASC') do
         column :categories do |category|
           link_to category.name, [ :admin, category ]
