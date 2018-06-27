@@ -12,13 +12,6 @@ permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficult
 #   permitted << :other if params[:action] == 'create' && current_user.admin?
 #   permitted
 # end
-
-  # index do
-  #   %i(problem_no title frequency reference appendix difficulty_id).each do |name|
-  #     column name
-  #   end
-  #   actions
-  # end
   config.per_page = 50
   show do
     attributes_table do
@@ -65,6 +58,7 @@ permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficult
       f.input :frequency
       f.input :reference
       f.input :appendix
+      f.input :url
     end
     f.actions
   end
