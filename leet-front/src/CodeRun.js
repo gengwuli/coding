@@ -15,32 +15,40 @@ export default class CodeRun extends React.Component {
 			socketAddr: process.env.REACT_APP_SOCKET_BACKEND,
 			sharedbAddr: process.env.REACT_APP_SHAREDB,
 			vizRenderAddr: process.env.REACT_APP_TEMPLATE_RENDER,
-			codeRunUrl: process.env.REACT_APP_CODE_RUNNER
+			codeRunUrl: process.env.REACT_APP_CODE_RUNNER,
+      fulldiv: ''
 		}
 		this.socket = io(this.state.socketAddr);
 		this.runCode = this.runCode.bind(this);
 		this.initializeSharedb = this.initializeSharedb.bind(this);
 		this.initializeSocket = this.initializeSocket.bind(this);
+    this.showFull = this.showFull.bind(this)
 	}
 
 	componentDidMount() {
 		this.initializeSharedb();
 		this.initializeSocket();
+    document.querySelector('.collabta').onkeydown = function(e){
+        if(e.keyCode===9 || e.which===9){
+            e.preventDefault();
+            var s = this.selectionStart;
+            this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
+            this.selectionEnd = s+1; 
+        }
+    }
     }
 
     render() {
     	return (<div className={'container'}>
                       <div>
                         <select id="language">
-                          <option>javascript</option>
-                          <option>python</option>
-                          <option>ruby</option>
-                          <option>java</option>
-                          <option>scala</option>
-                          <option>cpp</option>
-                          <option>elixir</option>
+                          {['javascript', 'python', 'ruby', 'java', 'scala', 'cpp', 'elixir']
+                            .map(language => <option>{language}</option>)}
                         </select>
-                        <select id="dataStructure"><option>array</option><option>tree</option><option>linked_list</option><option>raw</option></select>
+                        <select id="dataStructure">
+                          {['array', 'tree', 'linked_list', 'raw']
+                            .map(ds => <option>{ds}</option>)}
+                        </select>
                         <button onClick={this.runCode}>Run</button>
                       </div>
                       <div>
@@ -48,7 +56,7 @@ export default class CodeRun extends React.Component {
                       </div>
                       <div className={'results'}>
                           <div className={'upper'}>output</div>
-                          <div className={'down'}>graph</div>
+                          <div className={`down ${this.state.fulldiv}`} onClick={this.showFull}>graph</div>
                       </div>
                     </div>)
     }
@@ -77,6 +85,12 @@ export default class CodeRun extends React.Component {
       })
     }
 
+    showFull() {
+      this.setState({
+        fulldiv: this.state.fulldiv.length === 0 ? 'fulldiv' : ''
+      })
+    }
+
     initializeSharedb() {
     	// Open WebSocket connection to ShareDB server
 		let socket = new WebSocket(this.state.sharedbAddr);
@@ -84,18 +98,18 @@ export default class CodeRun extends React.Component {
 
 		// Create local Doc instance mapped to 'examples' collection document with id 'textarea'
 		let doc = connection.get('examples', 'textarea');
-		doc.subscribe(function(err) {
-		  if (err) throw err;
-		  let element = document.querySelector('textarea');
-		  let binding = new StringBinding(element, doc);
-		  binding.setup();
-		});
+  		doc.subscribe(function(err) {
+  		  if (err) throw err;
+  		  let element = document.querySelector('textarea');
+  		  let binding = new StringBinding(element, doc);
+  		  binding.setup();
+  		});
     }
 
     initializeSocket() {
-		this.socket.on('code finished', function(data) {
-		    document.querySelector('.upper').innerHTML = data.console;
-		    document.querySelector('.down').innerHTML = data.graph;
-		})
+  		this.socket.on('code finished', function(data) {
+  		    document.querySelector('.upper').innerHTML = data.console;
+  		    document.querySelector('.down').innerHTML = data.graph;
+  		})
     }
 }

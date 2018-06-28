@@ -76,6 +76,7 @@ export default class Problem extends React.Component {
         this.reset = this.reset.bind(this);
         this.onSelectOptionChange = this.onSelectOptionChange.bind(this);
         this.onSelectFocus = this.onSelectFocus.bind(this);
+        this.handleCloseModal = this.handleCloseModal.bind(this);
 
     }
 
@@ -91,7 +92,7 @@ export default class Problem extends React.Component {
             })
     }
 
-    // for local testing
+    // // for local testing
     // componentDidMount() {
     //     const problems = [{"problem_id":1,"title":"Two Sum","categories":"Array,Hash Table","companies":"LinkedIn,Uber,Airbnb,Facebook,Amazon,Microsoft,Apple,Yahoo,Dropbox,Bloomberg,Yelp,Adobe","frequency":"4774","solutions":[{"language":{"id":5,"name":"scala","created_at":"2018-06-25T04:50:33.797Z","updated_at":"2018-06-25T04:50:33.797Z"},"solution":"import scala.collection.mutable.HashMap\r\nobject Solution {\r\n    def twoSum(nums: Array[Int], target: Int): Array[Int] = {\r\n        val map = new HashMap[Int, Int]\r\n        for (i \u003c- 0 until nums.length) {\r\n            if (map.contains(nums(i))) { // 注意same element的定义, 是否是值相等还是同一个数\r\n                return Array(map(nums(i)), i)\r\n            }\r\n            map(target - nums(i)) = i\r\n        }\r\n        throw new IllegalArgumentException(\"No two sum solution\")\r\n    }\r\n}"},{"language":{"id":2,"name":"python","created_at":"2018-06-25T04:46:54.146Z","updated_at":"2018-06-25T04:46:54.146Z"},"solution":"class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        map = dict()\n        for i,num in enumerate(nums):\n            if target - num in map:\n                return [map[target-num], i]\n            map[num] = i"},{"language":{"id":1,"name":"java","created_at":"2018-06-25T04:46:54.143Z","updated_at":"2018-06-25T04:46:54.143Z"},"solution":"// 可以brute force可以二分法如果排序的话                                               \npublic class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        if (nums == null || nums.length == 0) {\n            return nums;\n        }\n        Map\u003cInteger, Integer\u003e map = new HashMap\u003c\u003e();\n        for (int i = 0; i \u003c nums.length; i++) {\n            if (map.containsKey(nums[i])) {\n                return new int[] {map.get(nums[i]), i};\n            }\n            map.put(target - nums[i], i);\n        }\n        return new int[0];\n    }\n}"}],"ref":"https://leetcode.com/articles/two-sum","append":"空","url":"https://leetcode.com/problems/two-sum","difficulty":"Easy"}]
     //       this.setState({
@@ -122,14 +123,15 @@ export default class Problem extends React.Component {
                 <div>
                       <ReactModal 
                            isOpen={this.state.showModal}>
+                           <button onClick={this.handleCloseModal}>X</button>
                            <AceEditor
                             mode={this.state.mode}
                             theme="textmate"
                             name="editor"
-                            setOptions={{ showLineNumbers: false }}
+                            setOptions={{ showLineNumbers: true }}
                             value={this.state.currentSolution}
-                            fontSize={16}
-                            showGutter={false}
+                            fontSize={14}
+                            showGutter={true}
                             highlightActiveLine={false}
                             readOnly={true}
                             width={"auto"}
@@ -333,7 +335,6 @@ export default class Problem extends React.Component {
     }
 
     onSolutionClick(e, d) {
-        console.log(d.language.name)
       this.setState({
         currentSolution: d.solution,
         mode: d.language.name,
@@ -363,6 +364,12 @@ export default class Problem extends React.Component {
       this.setState({
         sortedList: Immutable.List(this.state.problems).filter(x => x.difficulty === diff)
       });
+    }
+
+    handleCloseModal() {
+        this.setState({
+            showModal: false
+        })
     }
 
     onSearch(e) {

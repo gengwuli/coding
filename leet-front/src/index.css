@@ -8,6 +8,8 @@
 	float: left;
 	width: 50%;
 	height: 700px;
+	font-family:monospace;
+	tab-size : 4;
 }
 .results {
 	float: left;
@@ -28,4 +30,13 @@
 	height: 350px;
 	overflow-x: scroll;
 	border: 1px solid black;
+}
+.fulldiv {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 999;
+	background-color: white
 }
