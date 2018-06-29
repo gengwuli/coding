@@ -43,11 +43,11 @@ export default class CodeRun extends React.Component {
                       <div>
                         <select id="language">
                           {['javascript', 'python', 'ruby', 'java', 'scala', 'cpp', 'elixir']
-                            .map(language => <option>{language}</option>)}
+                            .map((language,i) => <option key={i}>{language}</option>)}
                         </select>
                         <select id="dataStructure">
                           {['array', 'tree', 'linked_list', 'raw']
-                            .map(ds => <option>{ds}</option>)}
+                            .map((ds,i) => <option key={i}>{ds}</option>)}
                         </select>
                         <button onClick={this.runCode}>Run</button>
                       </div>
@@ -55,29 +55,46 @@ export default class CodeRun extends React.Component {
                         <textarea className={'collabta'}></textarea>
                       </div>
                       <div className={'results'}>
-                          <div className={'upper'}>output</div>
-                          <div className={`down ${this.state.fulldiv}`} onClick={this.showFull}>graph</div>
+                          <fieldset className={'upper'}>
+                            <legend>output</legend>
+                            <div className={'output'}></div>
+                          </fieldset>
+                          <fieldset className={'down'}>
+                            <legend>graph</legend>
+                            <div className={`graph ${this.state.fulldiv}`} onClick={this.showFull}></div>
+                          </fieldset>
+                          
                       </div>
                     </div>)
     }
 
 
     runCode() {
+      const type = document.querySelector('#dataStructure').value
+      const code = document.querySelector('textarea').value
+      if (type === 'raw') {
+        request.post(this.state.vizRenderAddr, {'type': type, 'val': code})
+              .then(res => {
+                  this.socket.emit('code running', {console: code, graph: res.body.result})
+                  document.querySelector('.graph').innerHTML = res.body.result;
+              });
+        return
+      }
       request.post(this.state.codeRunUrl, {
         lang: document.querySelector('#language').value, 
         code: document.querySelector('textarea').value
       }).then(response =>  {
         const results = response.body.stdout
         if (results) {
-          document.querySelector(".upper").innerHTML = results;
+          document.querySelector(".output").innerHTML = results;
           // var display_type = document.querySelector('#type').value;
           request.post(this.state.vizRenderAddr, {'type': document.querySelector('#dataStructure').value, 'val': results})
               .then(res => {
                   this.socket.emit('code running', {console: results, graph: res.body.result})
-                  document.querySelector('.down').innerHTML = res.body.result;
+                  document.querySelector('.graph').innerHTML = res.body.result;
               });
         } else {
-          document.querySelector('.upper').innerHTML = response.body.stderr;
+          document.querySelector('.output').innerHTML = response.body.stderr;
           this.socket.emit('running code', {console: results, graph: ''})
         }
       }).catch(function(e) {
@@ -108,8 +125,8 @@ export default class CodeRun extends React.Component {
 
     initializeSocket() {
   		this.socket.on('code finished', function(data) {
-  		    document.querySelector('.upper').innerHTML = data.console;
-  		    document.querySelector('.down').innerHTML = data.graph;
+  		    document.querySelector('.output').innerHTML = data.console;
+  		    document.querySelector('.graph').innerHTML = data.graph;
   		})
     }
 }

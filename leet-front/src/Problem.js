@@ -32,7 +32,8 @@ export default class Problem extends React.Component {
         const sortedList = this._sortList({sortBy, sortDirection});
         superagentCache(request);
 
-        
+        this.myRef = React.createRef();
+        window.p = this
 
         this.state = {
             disableHeader: false,
@@ -123,19 +124,22 @@ export default class Problem extends React.Component {
                 <div>
                       <ReactModal 
                            isOpen={this.state.showModal}>
-                           <button onClick={this.handleCloseModal}>X</button>
-                           <AceEditor
-                            mode={this.state.mode}
-                            theme="textmate"
-                            name="editor"
-                            setOptions={{ showLineNumbers: true }}
-                            value={this.state.currentSolution}
-                            fontSize={14}
-                            showGutter={true}
-                            highlightActiveLine={false}
-                            readOnly={true}
-                            width={"auto"}
-                          />
+                           <fieldset>
+                                <legend onClick={this.handleCloseModal} align="right">X</legend>
+                               <AceEditor
+                                mode={this.state.mode}
+                                theme="textmate"
+                                name="editor"
+                                setOptions={{ showLineNumbers: true }}
+                                value={this.state.currentSolution}
+                                fontSize={14}
+                                showGutter={true}
+                                highlightActiveLine={false}
+                                readOnly={true}
+                                width={"auto"}
+                                ref={this.myRef}
+                              />
+                          </fieldset>
                         </ReactModal>
                         
                       <div>
@@ -174,7 +178,7 @@ export default class Problem extends React.Component {
                                     disableSort
                                     label="标题"
                                     dataKey="title"
-                                    cellRenderer={({cellData, rowData}) => (<a href={rowData.url}>{cellData}</a>)}
+                                    cellRenderer={({cellData, rowData}) => (<a href={rowData.url} target="_blank">{cellData}</a>)}
                                     flexGrow={2}
                                 />
 
@@ -209,7 +213,7 @@ export default class Problem extends React.Component {
                                     disableSort
                                     label="参考"
                                     dataKey="ref"
-                                    cellRenderer={({cellData}) => (<a href={cellData}>参考</a>)}
+                                    cellRenderer={({cellData}) => (<a href={cellData} target="_blank">参考</a>)}
                                     flexGrow={1}
                                 />    
 
@@ -319,7 +323,7 @@ export default class Problem extends React.Component {
     }
 
     _solutionRenderer({cellData, rowData}) {
-      if (cellData.length === 0) { return (<div>no solution</div>)}
+      if (cellData.length === 0) { return (<div>no solution</div>) }
       const btns = cellData.map((d) => {
         return <option key={Math.random()} onClick={(f) => this.onSolutionClick(f, d)}>{d.language.name}</option>
       })
@@ -340,6 +344,9 @@ export default class Problem extends React.Component {
         mode: d.language.name,
         showModal: true
       })
+      setTimeout(() => {
+        this.myRef.current.editor.gotoLine(1)
+      }, 10)
     }
 
     onClickSelect(e, dataKey) {
