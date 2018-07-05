@@ -14,12 +14,11 @@ textarea {
 .graph {
 	width: 100%;
 	height: 93%;
-	border: 1px solid red;
 }
-.output {
-	width: 100%;
+
+.wrapper {
+	width: 1px;
 	height: 93%;
-	border: 1px solid red;
 }
 .results {
 	float: left;
@@ -31,13 +30,13 @@ textarea {
 	float: left;
 	width: 500px;
 	height: 350px;
-	overflow-x: scroll;
+	overflow: auto;
 }
 .down {
 	float: left;
 	width: 500px;
 	height: 350px;
-	overflow-x: scroll;
+	overflow: auto;
 }
 .fulldiv {
 	position: fixed;

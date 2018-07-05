@@ -30,14 +30,7 @@ function renderTemplate(req, res) {
                 dotRes = body['val'].trim().split('\n').map(e => renderTree(e));
                 break;
             case 'array':
-                dotRes = body['val'].trim().split('\n').map(e => {
-                    let arr = JSON.parse(e);
-                    if (Array.isArray(arr[0])) {
-                        return renderArray(arr);
-                    } else {
-                        return renderArray([arr]);
-                    }
-                })
+                dotRes = body['val'].trim().split('\n').map(e => renderArray(e));
                 break;
             case 'linked_list':
                 dotRes = body['val'].trim().split('\n').map(e => renderList(JSON.parse(e)));

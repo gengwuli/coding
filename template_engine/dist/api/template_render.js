@@ -53,12 +53,7 @@ function renderTemplate(req, res) {
             break;
         case 'array':
             dotRes = body['val'].trim().split('\n').map(function (e) {
-                var arr = JSON.parse(e);
-                if (Array.isArray(arr[0])) {
-                    return (0, _ArrayUtil2.default)(arr);
-                } else {
-                    return (0, _ArrayUtil2.default)([arr]);
-                }
+                return (0, _ArrayUtil2.default)(e);
             });
             break;
         case 'linked_list':

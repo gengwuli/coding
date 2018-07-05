@@ -1,16 +1,70 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = renderArray;
 
-var _mustache = require('mustache');
+var _mustache = require("mustache");
 
 var _mustache2 = _interopRequireDefault(_mustache);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function renderArray(array) {
-    return _mustache2.default.render('digraph G {\n        node [shape=plaintext]\n        A [id="arr",label=<\n        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">\n          {{#arr}}\n            <TR>\n                {{#.}}\n                    <TD>{{.}}</TD>\n                {{/.}}\n            </TR>\n          {{/arr}}\n        </TABLE>>]\n        }', { arr: array });
+function renderArray(arrsWithPionters) {
+    var split = arrsWithPionters.split("|");
+    var arrs = split[0];
+    if (arrs.length - arrs.replace(/^\[+/, "").length == 1) {
+        arrs = "[" + arrs + "]";
+    }
+    var array = JSON.parse(arrs);
+
+    var pointers = '';
+    if (split.length > 1 && split[1].trim().length > 0) {
+        pointers = split[1];
+        pointers = JSON.parse(pointers);
+        pointers = pointers.map(function (e) {
+            var x = e[1],
+                y = e[2];
+            var taillabel = array.length == 1 ? "a[" + y + "]" : "a[" + x + "][" + y + "]";
+            return e[0] + "->arr:a" + x + "_" + y + " [taillabel=\"" + taillabel + "\"]";
+        }).join("\n");
+    }
+
+    var items = array.map(function (e, i) {
+        return e.map(function (k, j) {
+            return "<td PORT=\"a" + i + "_" + j + "\">" + k + "</td>";
+        });
+    });
+    if (split.length > 2 && split[2].trim().length > 0) {
+        var positions = split[2];
+        positions = JSON.parse(positions);
+        positions.forEach(function (pos) {
+            var x = 0,
+                y = 0;
+            if (pos.length == 1) {
+                y = pos[0];
+            } else if (pos.length == 2) {
+                x = pos[0];
+                y = pos[1];
+            }
+            items[x][y] = "<td PORT=\"a" + x + "_" + y + "\"><font color=\"orange\">" + array[x][y] + "</font></td>";
+        });
+    }
+    var trs = items.map(function (e, i) {
+        return "<tr>" + e.join("") + "</tr>";
+    }).join("");
+
+    var label = "<\n        <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">\n            " + trs + "\n         </TABLE>>";
+
+    return "digraph G {\n        node[shape=plaintext,height=0.1,width=0.1];\n        edge[arrowsize=0.5,color=\"#ff0000bf\",labelfontcolor=blue,labelfontsize=10];\n        arr[shape=none, margin=0, label=" + label + "];\n        " + pointers + "\n     }\n    ";
+    // return Mustache.render(`digraph G {
+    //     node[shape=plaintext,height=0.1,width=0.1]
+    //     edge[arrowsize=0.5,color="#ff0000bf",labelfontcolor=blue]
+    //     arr[shape=record,label="{1 |<f1>2 |3}|{4|<f2>5|6}|{7|8|<f3>9}"]
+    //     p -> arr:f1[fontsize=5,taillabel="a[0][2]"]
+    //     m -> arr:f2[fontsize=5,taillabel="a[0][2]"]
+    //     r -> arr:f3[labelfontsize=5,labelfontcolor=blue,style=filled,taillabel="a[0][2]",tooltip="hello"]
+    //     arr[shape=record,label="{1 |<f1>2 |3}|{4|<f2>5|6}|{7|8|<f3>9}"]
+    //     }`, {arr: array})
 }

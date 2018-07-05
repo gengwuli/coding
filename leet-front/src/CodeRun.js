@@ -16,13 +16,15 @@ export default class CodeRun extends React.Component {
 			sharedbAddr: process.env.REACT_APP_SHAREDB,
 			vizRenderAddr: process.env.REACT_APP_TEMPLATE_RENDER,
 			codeRunUrl: process.env.REACT_APP_CODE_RUNNER,
-      fulldiv: ''
+      fulldiv: '',
+      fulloutput: '',
 		}
 		this.socket = io(this.state.socketAddr);
 		this.runCode = this.runCode.bind(this);
 		this.initializeSharedb = this.initializeSharedb.bind(this);
 		this.initializeSocket = this.initializeSocket.bind(this);
-    this.showFull = this.showFull.bind(this)
+    this.showFull = this.showFull.bind(this);
+    this.showFullOutput = this.showFullOutput.bind(this);
 	}
 
 	componentDidMount() {
@@ -57,7 +59,7 @@ export default class CodeRun extends React.Component {
                       <div className={'results'}>
                           <fieldset className={'upper'}>
                             <legend>output</legend>
-                            <div className={'output'}></div>
+                            <div className={`wrapper ${this.state.fulloutput}`} onClick={this.showFullOutput}><pre className={'output'}></pre></div>
                           </fieldset>
                           <fieldset className={'down'}>
                             <legend>graph</legend>
@@ -105,6 +107,12 @@ export default class CodeRun extends React.Component {
     showFull() {
       this.setState({
         fulldiv: this.state.fulldiv.length === 0 ? 'fulldiv' : ''
+      })
+    }
+
+    showFullOutput() {
+      this.setState({
+        fulloutput: this.state.fulloutput.length === 0 ? 'fulldiv' : ''
       })
     }
 
