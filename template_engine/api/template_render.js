@@ -31,9 +31,10 @@ function renderTemplate(req, res) {
                 break;
             case 'array':
                 dotRes = body['val'].trim().split('\n').map(e => renderArray(e));
+                console.log(dotRes)
                 break;
             case 'linked_list':
-                dotRes = body['val'].trim().split('\n').map(e => renderList(JSON.parse(e)));
+                dotRes = body['val'].trim().split('\n').map(e => renderList(e));
                 console.log(dotRes)
                 break;
             default:

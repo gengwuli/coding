@@ -55,10 +55,11 @@ function renderTemplate(req, res) {
             dotRes = body['val'].trim().split('\n').map(function (e) {
                 return (0, _ArrayUtil2.default)(e);
             });
+            console.log(dotRes);
             break;
         case 'linked_list':
             dotRes = body['val'].trim().split('\n').map(function (e) {
-                return (0, _ListUtil2.default)(JSON.parse(e));
+                return (0, _ListUtil2.default)(e);
             });
             console.log(dotRes);
             break;

@@ -4,13 +4,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = renderArray;
-
-var _mustache = require("mustache");
-
-var _mustache2 = _interopRequireDefault(_mustache);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+//'[1,2,3,4]|[["p",0,1],["q",0,3]]'
 function renderArray(arrsWithPionters) {
     var split = arrsWithPionters.split("|");
     var arrs = split[0];
@@ -58,13 +52,4 @@ function renderArray(arrsWithPionters) {
     var label = "<\n        <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">\n            " + trs + "\n         </TABLE>>";
 
     return "digraph G {\n        node[shape=plaintext,height=0.1,width=0.1];\n        edge[arrowsize=0.5,color=\"#ff0000bf\",labelfontcolor=blue,labelfontsize=10];\n        arr[shape=none, margin=0, label=" + label + "];\n        " + pointers + "\n     }\n    ";
-    // return Mustache.render(`digraph G {
-    //     node[shape=plaintext,height=0.1,width=0.1]
-    //     edge[arrowsize=0.5,color="#ff0000bf",labelfontcolor=blue]
-    //     arr[shape=record,label="{1 |<f1>2 |3}|{4|<f2>5|6}|{7|8|<f3>9}"]
-    //     p -> arr:f1[fontsize=5,taillabel="a[0][2]"]
-    //     m -> arr:f2[fontsize=5,taillabel="a[0][2]"]
-    //     r -> arr:f3[labelfontsize=5,labelfontcolor=blue,style=filled,taillabel="a[0][2]",tooltip="hello"]
-    //     arr[shape=record,label="{1 |<f1>2 |3}|{4|<f2>5|6}|{7|8|<f3>9}"]
-    //     }`, {arr: array})
 }

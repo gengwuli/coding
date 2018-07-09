@@ -1,18 +1,41 @@
-import Mustache from 'mustache'
+import DeleteVizEdge from '../model/list/viz/edges/DeleteVizEdge'
+import AddVizEdge from '../model/list/viz/edges/AddVizEdge'
+import NormalVizEdge from '../model/list/viz/edges/NormalVizEdge'
+import NullVizListNode from '../model/list/viz/nodes/NullVizListNode'
+import Graph from "../model/list/viz/graph/Graph";
+import VizGraphFactory from "../model/list/viz/factory/VizGraphFactory";
 
-export default function renderList(list) {
-   let list_provider = list.map((e,i)=>{ return {e:e,i:i} });
-   let list_without_end_provider = list.slice(0, list.length - 1).map((e,i)=>{ return {e:e,i:i, nodeNext: function() {return i + 1;}} });
-   return Mustache.render(`
-    digraph g {
-    nodesep=.05;
-    rankdir=LR;
-    node [shape = record,height=.1,width=.1];
-    {{#list}}
-        node{{i}}[label="{<val>{{e}}|<next>}"];
-    {{/list}}
-    {{#list_without_end}}
-        node{{i}}:next->node{{nodeNext}}:val;
-    {{/list_without_end}}
-}`, {list: list_provider, list_without_end: list_without_end_provider})
+// [1,2,3,4]|{"ptrs":[[0,"p"],[1,"q"]],"ops":[{"swap":[1,2]},{"insert":[2,10]},{"delete":3}]}
+export default function renderList(str) {
+   let split = str.split("|");
+   let arr = JSON.parse(split[0]);
+   var g = new Graph();
+   g.subgraphs.push(VizGraphFactory.makeSimpleSubgraph(arr));
+
+   if (split[1]) {
+       let extra = JSON.parse(split[1]);
+       if (extra.ptrs) {
+          let list = g.subgraphs[0].vizLists[0]
+           list.addVizPointers(extra.ptrs)
+       }
+       if (extra.ops) {
+          extra.ops.forEach(op => {
+             let sub = createSubgraph(op, arr);
+             if (sub) g.subgraphs.push(sub)
+          })
+       }
+   }
+   return g.render();
+}
+
+function createSubgraph(op, arr) {
+   if (op.swap) {
+      return VizGraphFactory.makeSwapSubgraph(arr, ...op.swap)
+   }
+   if (op.insert) {
+      return VizGraphFactory.makeInsertSubgraph(arr, ...op.insert)
+   }
+   if (op.delete) {
+      return VizGraphFactory.makeDeleteSubgraph(arr, op.delete)
+   }
 }

@@ -1,4 +1,4 @@
-import Mustache from 'mustache'
+//'[1,2,3,4]|[["p",0,1],["q",0,3]]'
 export default function renderArray(arrsWithPionters) {
     let split = arrsWithPionters.split("|")
     let arrs = split[0]
@@ -48,13 +48,4 @@ export default function renderArray(arrsWithPionters) {
         ${pointers}
      }
     `
-    // return Mustache.render(`digraph G {
-    //     node[shape=plaintext,height=0.1,width=0.1]
-    //     edge[arrowsize=0.5,color="#ff0000bf",labelfontcolor=blue]
-    //     arr[shape=record,label="{1 |<f1>2 |3}|{4|<f2>5|6}|{7|8|<f3>9}"]
-    //     p -> arr:f1[fontsize=5,taillabel="a[0][2]"]
-    //     m -> arr:f2[fontsize=5,taillabel="a[0][2]"]
-    //     r -> arr:f3[labelfontsize=5,labelfontcolor=blue,style=filled,taillabel="a[0][2]",tooltip="hello"]
-    //     arr[shape=record,label="{1 |<f1>2 |3}|{4|<f2>5|6}|{7|8|<f3>9}"]
-    //     }`, {arr: array})
 }
