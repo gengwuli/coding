@@ -1,45 +1,37 @@
-//'[1,2,3,4]|[["p",0,1],["q",0,3]]'
-export default function renderArray(arrsWithPionters) {
-    let split = arrsWithPionters.split("|")
-    let arrs = split[0]
-    if (arrs.length - arrs.replace(/^\[+/,"").length == 1) {
-        arrs = "[" + arrs + "]"
-    }
-    let array = JSON.parse(arrs.trim())
+// {
+//     "arr":[1,2,3,4,5,6],
+//     "ptrs":[[0,"p"],[3,"q"]],
+//     "highlights":[1,5,3]
+// }
+export default function renderArray(arrStr) {
+    let json = JSON.parse(arrStr);
+    let array = json.arr;
+    let ptrs = json.ptrs;
+    let hls = json.highlights;
 
-    let pointers = ''
-    if (split.length > 1 && split[1].trim().length > 0) {
-        pointers = split[1]
-        pointers = JSON.parse(pointers.trim())
-        pointers = pointers.map(e => {
-            let x = e[1], y = e[2]
-            let taillabel = array.length == 1 ? `a[${y}]` : `a[${x}][${y}]`
-            return `${e[0]}->arr:a${x}_${y} [taillabel="${taillabel}"]`
-        }).join("\n")
-    }
+    // for 1d array
+    array = Array.isArray(array[0]) ? array : [array];
+    if (ptrs) ptrs = ptrs[0].length == 3 ? ptrs : ptrs.map(p => [0].concat(p));
+    if (hls) hls = Array.isArray(hls[0]) ? hls : hls.map(e => [0,e]);
 
-    let items = array.map((e,i) => e.map((k,j) => `<td PORT="a${i}_${j}">${k}</td>`))
-    if (split.length > 2 && split[2].trim().length > 0) {
-        let positions = split[2]
-        positions = JSON.parse(positions)
-        positions.forEach(pos => {
-            let x = 0, y = 0
-            if (pos.length == 1) {
-                y = pos[0]
-            } else if (pos.length == 2) {
-                x = pos[0]
-                y = pos[1]
-            }
-            items[x][y] = `<td PORT="a${x}_${y}"><font color="orange">${array[x][y]}</font></td>`
-        })
-    }
-    let trs = items.map((e,i) => `<tr>${e.join("")}</tr>`).join("")
+    let pointers = (ptrs || []).map(e => {
+        let x = e[0], y = e[1];
+        let taillabel = array.length === 1 ? `a[${y}]` : `a[${x}][${y}]`;
+        return `${e[2]}->arr:a${x}_${y} [taillabel="${taillabel}"]`
+    }).join("\n");
+
+    let items = array.map((e,i) => e.map((k,j) => `<td PORT="a${i}_${j}">${k}</td>`));
+    (hls || []).forEach(pos => {
+        let x = pos[0], y = pos[1];
+        items[x][y] = `<td PORT="a${x}_${y}"><font color="orange">${array[x][y]}</font></td>`
+    });
+
+    let trs = items.map((e,i) => `<tr>${e.join("")}</tr>`).join("");
 
     let label = `<
         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
             ${trs}
-         </TABLE>>`
-    
+         </TABLE>>`;
 
     return `digraph G {
         node[shape=plaintext,height=0.1,width=0.1];

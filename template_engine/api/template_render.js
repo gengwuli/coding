@@ -27,14 +27,14 @@ function renderTemplate(req, res) {
    let dotRes = '';
         switch(body.type) {
             case 'tree':
-                dotRes = body['val'].trim().split('\n').map(e => renderTree(e));
+                dotRes = body['val'].trim().split('|').map(e => renderTree(e));
                 break;
             case 'array':
-                dotRes = body['val'].trim().split('\n').map(e => renderArray(e));
+                dotRes = body['val'].trim().split('|').map(e => renderArray(e));
                 console.log(dotRes)
                 break;
             case 'linked_list':
-                dotRes = body['val'].trim().split('\n').map(e => renderList(e));
+                dotRes = body['val'].trim().split('|').map(e => renderList(e));
                 console.log(dotRes)
                 break;
             default:

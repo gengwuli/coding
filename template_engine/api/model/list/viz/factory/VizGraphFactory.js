@@ -63,9 +63,7 @@ export default class VizGraphFactory {
         addIdx(list);
         addListArray(list);
         let edges = arr.map((e,i) => {
-            if (pos === 0) {
-                return [[0,1,'n']]
-            } else if (i === pos - 1) {
+            if (i === pos - 1) {
                 return [[i, i + 1, 'a'],[i, i + 2, 'd']]
             } else if (i === pos) {
                 return [[i, i + 1, 'a']]
@@ -88,7 +86,9 @@ export default class VizGraphFactory {
         sub.vizLists.push(VizListFactory.makeSimpleList(arr));
         sub.invisConnect.push(`${sub.vizLists[1].listArray[pos].id}->${sub.vizLists[2].listArray[pos].id}[style=invis]`)
         sub.ranks = sub.vizLists.map(l => l.collect());
-        sub.ranks[1].splice(pos, 1);
+        if (pos != 0) {
+            sub.ranks[1].splice(pos, 1);
+        }
 
         sub.vizLists[1].addVizProps([pos])
         sub.vizLists[2].addVizProps([pos])

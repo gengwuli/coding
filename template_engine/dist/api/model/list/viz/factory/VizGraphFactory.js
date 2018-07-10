@@ -103,9 +103,7 @@ var VizGraphFactory = function () {
             (0, _util.addIdx)(list);
             (0, _util.addListArray)(list);
             var edges = arr.map(function (e, i) {
-                if (pos === 0) {
-                    return [[0, 1, 'n']];
-                } else if (i === pos - 1) {
+                if (i === pos - 1) {
                     return [[i, i + 1, 'a'], [i, i + 2, 'd']];
                 } else if (i === pos) {
                     return [[i, i + 1, 'a']];
@@ -136,7 +134,9 @@ var VizGraphFactory = function () {
             sub.ranks = sub.vizLists.map(function (l) {
                 return l.collect();
             });
-            sub.ranks[1].splice(pos, 1);
+            if (pos != 0) {
+                sub.ranks[1].splice(pos, 1);
+            }
 
             sub.vizLists[1].addVizProps([pos]);
             sub.vizLists[2].addVizProps([pos]);

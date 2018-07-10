@@ -33,25 +33,36 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-// [1,2,3,4]|{"ptrs":[[0,"p"],[1,"q"]],"ops":[{"swap":[1,2]},{"insert":[2,10]},{"delete":3}]}
+// {
+//     "arr":["a","b","c","d"],
+//     "ptrs":[[0,"p"],[2,"q"]],
+//     "highlights":[1,3],
+//     "ops":[
+//     {"insert":[1,9]}
+// ]
+// }
 function renderList(str) {
-   var split = str.split("|");
-   var arr = JSON.parse(split[0].trim());
+   var json = JSON.parse(str);
+   var arr = json.arr;
+   var ops = json.ops;
+   var ptrs = json.ptrs;
+   var hls = json.highlights;
    var g = new _Graph2.default();
    g.subgraphs.push(_VizGraphFactory2.default.makeSimpleSubgraph(arr));
 
-   if (split[1]) {
-      var extra = JSON.parse(split[1].trim());
-      if (extra.ptrs) {
-         var list = g.subgraphs[0].vizLists[0];
-         list.addVizPointers(extra.ptrs);
-      }
-      if (extra.ops) {
-         extra.ops.forEach(function (op) {
-            var sub = createSubgraph(op, arr);
-            if (sub) g.subgraphs.push(sub);
-         });
-      }
+   if (ptrs) {
+      var list = g.subgraphs[0].vizLists[0];
+      list.addVizPointers(ptrs);
+   }
+   if (ops) {
+      ops.forEach(function (op) {
+         var sub = createSubgraph(op, arr);
+         if (sub) g.subgraphs.push(sub);
+      });
+   }
+   if (hls) {
+      var _list = g.subgraphs[0].vizLists[0];
+      _list.addVizProps(hls);
    }
    return g.render();
 }

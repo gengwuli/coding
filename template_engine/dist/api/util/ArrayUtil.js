@@ -4,47 +4,44 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = renderArray;
-//'[1,2,3,4]|[["p",0,1],["q",0,3]]'
-function renderArray(arrsWithPionters) {
-    var split = arrsWithPionters.split("|");
-    var arrs = split[0];
-    if (arrs.length - arrs.replace(/^\[+/, "").length == 1) {
-        arrs = "[" + arrs + "]";
-    }
-    var array = JSON.parse(arrs.trim());
+// {
+//     "arr":[1,2,3,4,5,6],
+//     "ptrs":[[0,"p"],[3,"q"]],
+//     "highlights":[1,5,3]
+// }
+function renderArray(arrStr) {
+    var json = JSON.parse(arrStr);
+    var array = json.arr;
+    var ptrs = json.ptrs;
+    var hls = json.highlights;
 
-    var pointers = '';
-    if (split.length > 1 && split[1].trim().length > 0) {
-        pointers = split[1];
-        pointers = JSON.parse(pointers.trim());
-        pointers = pointers.map(function (e) {
-            var x = e[1],
-                y = e[2];
-            var taillabel = array.length == 1 ? "a[" + y + "]" : "a[" + x + "][" + y + "]";
-            return e[0] + "->arr:a" + x + "_" + y + " [taillabel=\"" + taillabel + "\"]";
-        }).join("\n");
-    }
+    // for 1d array
+    array = Array.isArray(array[0]) ? array : [array];
+    if (ptrs) ptrs = ptrs[0].length == 3 ? ptrs : ptrs.map(function (p) {
+        return [0].concat(p);
+    });
+    if (hls) hls = Array.isArray(hls[0]) ? hls : hls.map(function (e) {
+        return [0, e];
+    });
+
+    var pointers = (ptrs || []).map(function (e) {
+        var x = e[0],
+            y = e[1];
+        var taillabel = array.length === 1 ? "a[" + y + "]" : "a[" + x + "][" + y + "]";
+        return e[2] + "->arr:a" + x + "_" + y + " [taillabel=\"" + taillabel + "\"]";
+    }).join("\n");
 
     var items = array.map(function (e, i) {
         return e.map(function (k, j) {
             return "<td PORT=\"a" + i + "_" + j + "\">" + k + "</td>";
         });
     });
-    if (split.length > 2 && split[2].trim().length > 0) {
-        var positions = split[2];
-        positions = JSON.parse(positions);
-        positions.forEach(function (pos) {
-            var x = 0,
-                y = 0;
-            if (pos.length == 1) {
-                y = pos[0];
-            } else if (pos.length == 2) {
-                x = pos[0];
-                y = pos[1];
-            }
-            items[x][y] = "<td PORT=\"a" + x + "_" + y + "\"><font color=\"orange\">" + array[x][y] + "</font></td>";
-        });
-    }
+    (hls || []).forEach(function (pos) {
+        var x = pos[0],
+            y = pos[1];
+        items[x][y] = "<td PORT=\"a" + x + "_" + y + "\"><font color=\"orange\">" + array[x][y] + "</font></td>";
+    });
+
     var trs = items.map(function (e, i) {
         return "<tr>" + e.join("") + "</tr>";
     }).join("");

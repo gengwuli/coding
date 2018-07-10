@@ -47,18 +47,18 @@ function renderTemplate(req, res) {
     var dotRes = '';
     switch (body.type) {
         case 'tree':
-            dotRes = body['val'].trim().split('\n').map(function (e) {
+            dotRes = body['val'].trim().split('|').map(function (e) {
                 return (0, _TreeUtil2.default)(e);
             });
             break;
         case 'array':
-            dotRes = body['val'].trim().split('\n').map(function (e) {
+            dotRes = body['val'].trim().split('|').map(function (e) {
                 return (0, _ArrayUtil2.default)(e);
             });
             console.log(dotRes);
             break;
         case 'linked_list':
-            dotRes = body['val'].trim().split('\n').map(function (e) {
+            dotRes = body['val'].trim().split('|').map(function (e) {
                 return (0, _ListUtil2.default)(e);
             });
             console.log(dotRes);
