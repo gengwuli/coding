@@ -11,12 +11,12 @@ function renderArray(arrsWithPionters) {
     if (arrs.length - arrs.replace(/^\[+/, "").length == 1) {
         arrs = "[" + arrs + "]";
     }
-    var array = JSON.parse(arrs);
+    var array = JSON.parse(arrs.trim());
 
     var pointers = '';
     if (split.length > 1 && split[1].trim().length > 0) {
         pointers = split[1];
-        pointers = JSON.parse(pointers);
+        pointers = JSON.parse(pointers.trim());
         pointers = pointers.map(function (e) {
             var x = e[1],
                 y = e[2];

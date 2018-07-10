@@ -5,12 +5,12 @@ export default function renderArray(arrsWithPionters) {
     if (arrs.length - arrs.replace(/^\[+/,"").length == 1) {
         arrs = "[" + arrs + "]"
     }
-    let array = JSON.parse(arrs)
+    let array = JSON.parse(arrs.trim())
 
     let pointers = ''
     if (split.length > 1 && split[1].trim().length > 0) {
         pointers = split[1]
-        pointers = JSON.parse(pointers)
+        pointers = JSON.parse(pointers.trim())
         pointers = pointers.map(e => {
             let x = e[1], y = e[2]
             let taillabel = array.length == 1 ? `a[${y}]` : `a[${x}][${y}]`

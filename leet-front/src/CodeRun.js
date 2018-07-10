@@ -44,7 +44,7 @@ export default class CodeRun extends React.Component {
     	return (<div className={'container'}>
                       <div>
                         <select id="language">
-                          {['javascript', 'python', 'ruby', 'java', 'scala', 'cpp', 'elixir']
+                          {['javascript', 'python', 'ruby', 'java', 'scala', 'cpp', 'elixir', 'raw']
                             .map((language,i) => <option key={i}>{language}</option>)}
                         </select>
                         <select id="dataStructure">
@@ -74,6 +74,7 @@ export default class CodeRun extends React.Component {
     runCode() {
       const type = document.querySelector('#dataStructure').value
       const code = document.querySelector('textarea').value
+      const lang = document.querySelector('#language').value
       if (type === 'raw') {
         request.post(this.state.vizRenderAddr, {'type': type, 'val': code})
               .then(res => {
@@ -82,15 +83,25 @@ export default class CodeRun extends React.Component {
               });
         return
       }
+      if (lang === 'raw') {
+        document.querySelector(".output").innerHTML = code;
+        request.post(this.state.vizRenderAddr, {'type': type, 'val': code.replace(/(?:\r\n|\r|\n)/g, '')})
+              .then(res => {
+                  this.socket.emit('code running', {console: code, graph: res.body.result})
+                  document.querySelector('.graph').innerHTML = res.body.result;
+              });
+        return
+      }
+      
       request.post(this.state.codeRunUrl, {
-        lang: document.querySelector('#language').value, 
+        lang: lang, 
         code: document.querySelector('textarea').value
       }).then(response =>  {
         const results = response.body.stdout
         if (results) {
           document.querySelector(".output").innerHTML = results;
           // var display_type = document.querySelector('#type').value;
-          request.post(this.state.vizRenderAddr, {'type': document.querySelector('#dataStructure').value, 'val': results})
+          request.post(this.state.vizRenderAddr, {'type': type, 'val': results})
               .then(res => {
                   this.socket.emit('code running', {console: results, graph: res.body.result})
                   document.querySelector('.graph').innerHTML = res.body.result;

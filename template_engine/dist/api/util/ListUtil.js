@@ -36,12 +36,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 // [1,2,3,4]|{"ptrs":[[0,"p"],[1,"q"]],"ops":[{"swap":[1,2]},{"insert":[2,10]},{"delete":3}]}
 function renderList(str) {
    var split = str.split("|");
-   var arr = JSON.parse(split[0]);
+   var arr = JSON.parse(split[0].trim());
    var g = new _Graph2.default();
    g.subgraphs.push(_VizGraphFactory2.default.makeSimpleSubgraph(arr));
 
    if (split[1]) {
-      var extra = JSON.parse(split[1]);
+      var extra = JSON.parse(split[1].trim());
       if (extra.ptrs) {
          var list = g.subgraphs[0].vizLists[0];
          list.addVizPointers(extra.ptrs);
