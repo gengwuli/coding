@@ -16,7 +16,8 @@
     "sharedb-string-binding": "^1.0.0",
     "socket.io": "^2.1.1",
     "superagent": "^3.8.3",
-    "superagent-cache": "^3.0.0"
+    "superagent-cache": "^3.0.0",
+    "viz.js": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

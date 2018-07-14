@@ -55,26 +55,16 @@ function renderTemplate(req, res) {
             dotRes = body['val'].trim().split('|').map(function (e) {
                 return (0, _ArrayUtil2.default)(e);
             });
-            console.log(dotRes);
             break;
         case 'linked_list':
             dotRes = body['val'].trim().split('|').map(function (e) {
                 return (0, _ListUtil2.default)(e);
             });
-            console.log(dotRes);
             break;
         default:
             dotRes = [body['val'].trim()];
             break;
     }
 
-    Promise.all(dotRes.map(function (eachLine) {
-        return viz.renderString(eachLine);
-    })).then(function (values) {
-        res.json({ "result": values.map(function (e) {
-                return '<div>' + e + '</div>';
-            }).join('\n') });
-    }).catch(function (error) {
-        res.json({ "error": error });
-    });
+    res.json({ result: dotRes });
 }

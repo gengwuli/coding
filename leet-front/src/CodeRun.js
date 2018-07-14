@@ -8,6 +8,12 @@ import io from 'socket.io-client'
 import Connection from 'sharedb/lib/client'
 import StringBinding from 'sharedb-string-binding'
 
+import Viz from 'viz.js'
+import { Module, render } from 'viz.js/full.render.js'
+
+const viz = new Viz({ Module, render });
+
+
 export default class CodeRun extends React.Component {
 	constructor(props) {
 		super(props)
@@ -25,6 +31,7 @@ export default class CodeRun extends React.Component {
 		this.initializeSocket = this.initializeSocket.bind(this);
     this.showFull = this.showFull.bind(this);
     this.showFullOutput = this.showFullOutput.bind(this);
+    this.postViz = this.postViz.bind(this)
 	}
 
 	componentDidMount() {
@@ -76,20 +83,12 @@ export default class CodeRun extends React.Component {
       const code = document.querySelector('textarea').value
       const lang = document.querySelector('#language').value
       if (type === 'raw') {
-        request.post(this.state.vizRenderAddr, {'type': type, 'val': code})
-              .then(res => {
-                  this.socket.emit('code running', {console: code, graph: res.body.result})
-                  document.querySelector('.graph').innerHTML = res.body.result;
-              });
+        this.postViz(type, code)
         return
       }
       if (lang === 'raw') {
         document.querySelector(".output").innerHTML = code;
-        request.post(this.state.vizRenderAddr, {'type': type, 'val': code.replace(/(?:\r\n|\r|\n)/g, '')})
-              .then(res => {
-                  this.socket.emit('code running', {console: code, graph: res.body.result})
-                  document.querySelector('.graph').innerHTML = res.body.result;
-              });
+        this.postViz(type, code)
         return
       }
       
@@ -100,7 +99,6 @@ export default class CodeRun extends React.Component {
         const results = response.body.stdout
         if (results) {
           document.querySelector(".output").innerHTML = results;
-          // var display_type = document.querySelector('#type').value;
           request.post(this.state.vizRenderAddr, {'type': type, 'val': results})
               .then(res => {
                   this.socket.emit('code running', {console: results, graph: res.body.result})
@@ -113,6 +111,17 @@ export default class CodeRun extends React.Component {
       }).catch(function(e) {
         console.log(e)
       })
+    }
+
+    postViz(type, code) {
+      request.post(this.state.vizRenderAddr, {'type': type, 'val': code.replace(/(?:\r\n|\r|\n)/g, '')})
+              .then(res => {
+                  this.socket.emit('code running', {console: code, graph: res.body.result})
+                  document.querySelector('.graph').innerHTML = "";
+                  res.body.result.forEach(line => viz.renderString(line).then(e => {
+                    document.querySelector('.graph').innerHTML += `<div>${e}</div>`
+                  }))
+              });
     }
 
     showFull() {
