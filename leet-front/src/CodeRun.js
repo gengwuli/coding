@@ -154,7 +154,10 @@ export default class CodeRun extends React.Component {
     initializeSocket() {
   		this.socket.on('code finished', function(data) {
   		    document.querySelector('.output').innerHTML = data.console;
-  		    document.querySelector('.graph').innerHTML = data.graph;
+          document.querySelector('.graph').innerHTML = "";
+          data.graph.forEach(line => viz.renderString(line).then(e => {
+            document.querySelector('.graph').innerHTML += `<div>${e}</div>`
+          }))
   		})
     }
 }

@@ -1,3 +1,5 @@
+docker rmi $(docker images -q -f dangling=true)
+
 # init .htpasswd
 nginx=$(docker ps -aqf "name=coding_nginx_1")
 docker cp ~/htpasswd $nginx:/etc/nginx
