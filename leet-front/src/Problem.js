@@ -51,13 +51,16 @@ export default class Problem extends React.Component {
             currentSolution: '',
             problemUrl: process.env.REACT_APP_PROBLEM_BACKEND,
             mode: 'javascript',
-            showModal: false
+            showSolution: false,
+            showDescription: false,
+            currentDescription: ''
         };
 
         document.addEventListener('keyup', (e) => {
             if ((e.keyCode || e.which) == 27) {
                 this.setState({
-                    showModal: false
+                    showSolution: false,
+                    showDescription: false
                 })
             }
         })
@@ -77,7 +80,9 @@ export default class Problem extends React.Component {
         this.reset = this.reset.bind(this);
         this.onSelectOptionChange = this.onSelectOptionChange.bind(this);
         this.onSelectFocus = this.onSelectFocus.bind(this);
-        this.handleCloseModal = this.handleCloseModal.bind(this);
+        this.handleCloseSolution = this.handleCloseSolution.bind(this);
+        this._renderDescription = this._renderDescription.bind(this);
+        this.handleCloseDescription = this.handleCloseDescription.bind(this);
 
     }
 
@@ -123,9 +128,9 @@ export default class Problem extends React.Component {
         return (
                 <div>
                       <ReactModal 
-                           isOpen={this.state.showModal}>
+                           isOpen={this.state.showSolution}>
                            <fieldset>
-                                <legend onClick={this.handleCloseModal} align="right">X</legend>
+                               <legend onClick={this.handleCloseSolution} align="right">X</legend>
                                <AceEditor
                                 mode={this.state.mode}
                                 theme="textmate"
@@ -141,7 +146,15 @@ export default class Problem extends React.Component {
                               />
                           </fieldset>
                         </ReactModal>
-                        
+
+                        <ReactModal 
+                           isOpen={this.state.showDescription}>
+                           <fieldset>
+                               <legend onClick={this.handleCloseDescription} align="right">X</legend>
+                               <div className={'currentDescription'}></div>
+                          </fieldset>
+                        </ReactModal>
+
                       <div>
                         <input type="text" placeholder="search id" onKeyUp={this.onSearch}/>
                         <input type="text" placeholder="search title"  onKeyUp={this.onSearch}/>
@@ -170,7 +183,7 @@ export default class Problem extends React.Component {
                                     width={50}
                                     label="#"
                                     dataKey="problem_id"
-                                    cellRenderer={({cellData}) => cellData}
+                                    cellRenderer={this._renderDescription}
                                     flexGrow={1}
                                 />
                                 <Column
@@ -322,6 +335,11 @@ export default class Problem extends React.Component {
       return <select onChange={(f) => this.onClickSelect(f, dataKey)} onFocus={this.onSelectFocus}>{opts}</select>
     }
 
+    _renderDescription({cellData, rowData, dataKey}) {
+        const desc = rowData.description
+        return <span onClick={(f) => this.onDescriptionClick(f, desc)}>{cellData}</span>
+    }
+
     _solutionRenderer({cellData, rowData}) {
       if (cellData.length === 0) { return (<div>no solution</div>) }
       const btns = cellData.map((d) => {
@@ -342,11 +360,20 @@ export default class Problem extends React.Component {
       this.setState({
         currentSolution: d.solution,
         mode: d.language.name,
-        showModal: true
+        showSolution: true
       })
       setTimeout(() => {
         this.myRef.current.editor.gotoLine(1)
       }, 10)
+    }
+
+    onDescriptionClick(e, d) {
+        this.setState({
+            showDescription: true,
+        })
+        setTimeout(() => {
+            document.querySelector('.currentDescription').innerHTML = d
+        }, 10)
     }
 
     onClickSelect(e, dataKey) {
@@ -373,9 +400,15 @@ export default class Problem extends React.Component {
       });
     }
 
-    handleCloseModal() {
+    handleCloseSolution() {
         this.setState({
-            showModal: false
+            showSolution: false
+        })
+    }
+
+    handleCloseDescription() {
+        this.setState({
+            showDescription: false
         })
     }
 

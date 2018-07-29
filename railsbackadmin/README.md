@@ -92,3 +92,7 @@ end
 ```
 
 ### change models admin and controllers
+
+```ruby
+rails g migration AddUniqueNameToCompany
+```

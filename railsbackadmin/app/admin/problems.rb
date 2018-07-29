@@ -2,7 +2,7 @@ ActiveAdmin.register Problem do
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 #
-permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficulty_id, :url, company_ids: [],
+permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficulty_id, :url, :description, company_ids: [],
               category_ids: []
 #
 # or
@@ -50,7 +50,7 @@ permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficult
 
   form do |f|
     f.actions
-    f.inputs 'Categories / Companies' do
+    f.inputs 'Problem' do
       f.input :difficulty, :as => :select
       f.input :categories, :as => :check_boxes
       f.input :companies, :as => :check_boxes
@@ -60,6 +60,7 @@ permit_params :problem_no ,:title ,:frequency ,:reference ,:appendix, :difficult
       f.input :reference
       f.input :appendix
       f.input :url
+      f.input :description
     end
     f.actions
   end

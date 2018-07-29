@@ -16,6 +16,7 @@ class ProblemsController < ApplicationController
                 reference = problem.reference
                 appendix = problem.appendix
                 url = problem.url
+                description = problem.description
                 solutions = problem.solutions.map do |sol|  
                     {
                         "language" => sol.language,
@@ -32,7 +33,8 @@ class ProblemsController < ApplicationController
                     "ref" => reference,
                     "append" => appendix,
                     "url" => url,
-                    "difficulty" => difficulty
+                    "difficulty" => difficulty,
+                    "description" => description
                 }
             end
             render json: res
